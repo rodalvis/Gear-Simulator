@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <math.h>
+
 /*
 --25.4 / TPI = Metric Pitch
 --25.4 / Metric Pitch = TPI
@@ -10,33 +10,25 @@
 //teste de calculo de proporção entre eixo arvore e fuso.
 //intervalo do encoder para cada pulso do stepper.
 //exemplo: 3 intervalos para 1 passo para obter 3mm de rosca.
-int arred_ii(float n);
-int arred_mm(float n);
+
+#define tam(vet) (sizeof((vet)) / sizeof(int))			//macro
+
 void main(){
-	float II2MM =0;
-	float result=0; 
-		for(float MM =0.25; MM<= 3.50;MM+=0.25){
-		result=arred_mm((1200/(200/3.18*MM)));
-		result<=0 ? printf("") : printf("Para MMs:%f  Intervalo de Linhas:%f\n",MM,result);
+
+	float rosc_mm[] = {0.25,0.50,0.85,1.0,1.25,1.75,2.0};
+	int rosc_ii[] ={8,9,10,11,12,13,14,15,16,17,18,19,20};
+
+		for(int i =0 ; i<tam(rosc_mm);i++){
+		printf("Rosca Milimetro MM: %f \t Espacos: %f \n",rosc_mm[i],(1200/(200/(3.18*rosc_mm[i]))));
 	}
-		for(int II=5;II<=52;II++){
-		II2MM =(25.4/II);
-		result=arred_ii((1200/(200/3.18*II2MM)));
-		result<=0 ? printf("") : printf("Para TPIs:%d  Intervalo de Linhas:%f\n",II,result) ;
+
+		for(int i =0 ; i<tam(rosc_ii);i++){
+		printf("Rosca Polegada TPI: %d \t Espacos: %f \n",rosc_ii[i],(1200/(200/(3.18*(25.4/rosc_ii[i])))));
+
+		}
+system("pause");
 	}
 
 	
-}
 
-int arred_mm(float n){
-	int n_int = n;
-		if(n - n_int <= 0.40){return n_int;}
-		else if(n - n_int >=0.60){return n_int;}
-		else return 0; 
-	}
-int arred_ii(float n){
-	int n_int = n;
-		if(n - n_int <= 0.30){return n_int;}
-		else if(n - n_int >=0.85){return n_int;}
-		else return 0; 
-	}
+
