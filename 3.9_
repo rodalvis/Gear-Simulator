@@ -7,7 +7,7 @@ LiquidCrystal lcd(8,9,4,5,6,7);
 int rosc_ii[] ={8,9,10,11,12,13,14,15,16,17,18,19,20};  // fios por polegada
 float rosc_mm[] = {0.25,0.50,0.85,1.0,1.25,1.50,1.75,2.0};  //Rosca passo em milimetro
    
-volatile short int count = 0;
+volatile unsigned short int count = 0;
 //Pinagem do Motor e Encoder
 #define motor A5 // EN habilita o motor
 #define dir 11 // DIR determina a direção
@@ -61,8 +61,6 @@ void setup()
 Serial.begin(9600);
         
     lcd.begin(16,2);  //Initialize a 2x16 type LCD
-    lcd.createChar(1,parafuso);
-    lcd.createChar(2,nao);
     MainMenuDisplay();
     
 }
@@ -109,7 +107,7 @@ void MenuA()                            //Função de Menu de Direção
         V_Dir_Esq();
         if(ReadKeypad() == 'R'){
         Direcao();
-        delay(250);}
+        delay(150);}
         
         }    
     }
@@ -117,8 +115,7 @@ int MenuB()                              //Função de Menu da Rosca Metrica
 {     unsigned short int r = 0;
     while(ReadKeypad()!= 'L')
     {
-
-         
+     
     lcd.setCursor(0,0);
     lcd.print("Rosca Metrica");  
       
@@ -128,21 +125,21 @@ int MenuB()                              //Função de Menu da Rosca Metrica
         V_On_Off();
         intervalo = intervalo_mm(rosc_mm[r]);      
         if(ReadKeypad() == 'R' && !(intervalo==0)){
-        delay(200);     //Delay de Segurança NÃO RETIRAR.
+        delay(100);     //Delay de Segurança NÃO RETIRAR.
         rosca = !rosca;
         Motor_Estado();
         V_On_Off();
         int2pul();    //envia pulsos a cada N intervalos  
-        delay(200);
+        delay(100);
         }
         else if(ReadKeypad() == 'U' && r < (sizeof(rosc_mm)/sizeof(int)) ){ 
         r++;
-        delay(200);
+        delay(100);
         }
-        else if(ReadKeypad() == 'D' &&  r >= rosca_mm[0] ){
+        else if(ReadKeypad() == 'D' &&  r >= rosc_mm[0] ){
         lcd.clear();
         r--;
-        delay(200);
+        delay(100);
     }
 }
 }
@@ -159,21 +156,21 @@ int MenuC(){
         V_On_Off();
         intervalo = intervalo_ii(rosc_ii[r]);      
         if(ReadKeypad() == 'R'){
-        delay(200);     //Delay de Segurança NÃO RETIRAR.
+        delay(100);     //Delay de Segurança NÃO RETIRAR.
         rosca = !rosca;
         Motor_Estado();
         V_On_Off();
         int2pul();    //envia pulsos a cada N intervalos  
-        delay(200);
+        delay(100);
         }
         else if(ReadKeypad() == 'U' && r < (sizeof(rosc_ii)/sizeof(int))){ 
         r++;
-        delay(200);
+        delay(100);
         }
-        else if(ReadKeypad() == 'D' && r >= rosca_ii[0] ){
+        else if(ReadKeypad() == 'D' && r >= rosc_ii[0] ){
         lcd.clear();
         r--;
-        delay(200);}
+        delay(100);}
 }
 }
 void MenuD(){                     //Função de Menu do Passo Desejado
@@ -185,19 +182,19 @@ void MenuD(){                     //Função de Menu do Passo Desejado
           lcd.print(passo);
           lcd.print(" mm");
           V_On_Off();          
-          gira(); 
+          gira(passo); 
         if(ReadKeypad() == 'R'){
-        Motor_Estado(passo);
-        delay(200);
+        Motor_Estado();
+        delay(100);
         }
         else if(ReadKeypad() == 'U' && passo <= 9.9){ 
         passo+=0.1;
-        delay(200);
+        delay(100);
         }
         else if(ReadKeypad() == 'D' && passo >= 0.1){
         lcd.clear();
         passo-=0.1;
-        delay(200);
+        delay(100);
         }     
         
     }
@@ -245,16 +242,16 @@ void gira(float passo){                                  //Função para gerar p
   //delayMicroseconds(900); 
   if(ReadKeypad() == 'R'){
     Motor_Estado();
-    delay(200);}
+    delay(100);}
            }
   }
 
 int intervalo_mm(float rosca_milimetro){
-  return(int)(1200/(200/(3.18*rosca_milimetro)));     //calculo intervalo para rosca milimetro
+  return(1200/(200/(3.18*rosca_milimetro)));     //calculo intervalo para rosca milimetro
 }
 
 int intervalo_ii(int rosca_polegada){
-  return(int)(1200/(200/(3.18*(25.4/rosca_polegada)))); //calculo intervalo para rosca polegada
+  return(1200/(200/(3.18*(25.4/rosca_polegada)))); //calculo intervalo para rosca polegada
 }
 
 
@@ -264,7 +261,7 @@ void int2pul(){
  if(ReadKeypad() == 'R'){
     rosca = !rosca;
     Motor_Estado();
-    delay(200);}
+    delay(100);}
   }     
 }
 
@@ -275,7 +272,7 @@ void ai0()
     digitalWrite(pul,HIGH);
     delay(intervalo);
     digitalWrite(pul,LOW); }
-  if (digitalRead(3) == LOW)
+  else if (digitalRead(3) == LOW)
   {  count++; }
   else
   {  count--; }
@@ -288,7 +285,7 @@ void ai1()
     digitalWrite(pul,HIGH);
     delay(intervalo);
     digitalWrite(pul,LOW); }
-  if (digitalRead(2) == LOW)
+  else if (digitalRead(2) == LOW)
   {  count--; }
   else
   {  count++; }
