@@ -7,7 +7,7 @@ LiquidCrystal lcd(8,9,4,5,6,7);
 int rosc_ii[] ={8,9,10,11,12,13,14,15,16,17,18,19,20};  // fios por polegada
 float rosc_mm[] = {0.25,0.50,0.85,1.0,1.25,1.50,1.75,2.0};  //Rosca passo em milimetro
    
-volatile unsigned short int count = 0;
+volatile short int count = 0;   // SEMPRE DEIXAR A VARIAVEL COMO VOLATILE SHORT INT
 //Pinagem do Motor e Encoder
 #define motor A5 // EN habilita o motor
 #define dir 11 // DIR determina a direção
@@ -28,7 +28,7 @@ void int2pul();
 void WaitBtnRelease();
 char ReadKeypad();
 void MainMenuBtn();
-boolean rosca=false;
+boolean rosca=false;       ////////deixar false FALSE
 
   //Variaveis Globais
 short int intervalo = 100; //--------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ void setup()
     pinMode(dir, OUTPUT);
     pinMode(pul, OUTPUT);
 
-Serial.begin(9600);
+    Serial.begin(9600);
         
     lcd.begin(16,2);  //Initialize a 2x16 type LCD
     MainMenuDisplay();
@@ -268,10 +268,13 @@ void int2pul(){
 void ai0()
 { 
   if(count>=intervalo && rosca){  
-    count = 0;
+  // Serial.println("ai0");
+  // Serial.println(count);
+   count = 0;
     digitalWrite(pul,HIGH);
     delay(intervalo);
-    digitalWrite(pul,LOW); }
+    digitalWrite(pul,LOW);      
+    }
   else if (digitalRead(3) == LOW)
   {  count++; }
   else
@@ -281,6 +284,8 @@ void ai0()
 void ai1()
 {
  if(count>=intervalo && rosca){  
+    //Serial.println("ai1");
+   // Serial.println(count);
     count = 0;
     digitalWrite(pul,HIGH);
     delay(intervalo);
